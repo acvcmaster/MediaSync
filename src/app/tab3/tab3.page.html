@@ -15,7 +15,7 @@
   <ion-list *ngIf="fileList && fileList.length">
     <ion-item *ngFor="let file of fileList">
       <ion-thumbnail>
-        <ion-img src="{{ apiService.apiUrl }}/GetThumbnail?file={{ file.name }}&resolution=Small " alt=""></ion-img>
+        <ion-img src="{{ environment.apiUrl }}/GetThumbnail?file={{ file.name }}&resolution=Small " alt=""></ion-img>
       </ion-thumbnail>
       <ion-label class="tab">{{ file.name }}</ion-label>
     </ion-item>
