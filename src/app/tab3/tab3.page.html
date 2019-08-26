@@ -1,9 +1,24 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>
-      Tab Three
+      List
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content></ion-content>
+<ion-content>
+
+  <ion-refresher slot="fixed" (ionRefresh)="onRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-list *ngIf="fileList && fileList.length">
+    <ion-item *ngFor="let file of fileList">
+      <ion-thumbnail>
+        <ion-img src="{{ apiService.apiUrl }}/GetThumbnail?file={{ file.name }}&resolution=Small " alt=""></ion-img>
+      </ion-thumbnail>
+      <ion-label class="tab">{{ file.name }}</ion-label>
+    </ion-item>
+  </ion-list>
+  
+</ion-content>
