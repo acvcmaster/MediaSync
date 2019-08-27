@@ -1,0 +1,20 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      Details
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card class="welcome-card" *ngIf="file">
+    <img src="{{ environment.apiUrl }}/GetThumbnail?file={{ file.name }}&resolution=Large" alt="" />
+    <ion-card-header>
+      <ion-card-subtitle>File details</ion-card-subtitle>
+      <ion-card-title class="ion-text-center">{{ file.name | noExtension | trim }}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>Size : {{ file.size | inMB }}</p>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
