@@ -13,8 +13,11 @@ import { environment } from 'src/environments/environment';
 export class ApiService {
   constructor(private httpClient: HttpClient) { }
 
-  getFileIndex() : Observable<FileIndexEntry[]>
-  {
+  getFileIndex() : Observable<FileIndexEntry[]> {
     return this.httpClient.get<ApiResponse>(`${environment.apiUrl}/GetFileIndex`).pipe(map((data) => data.result));
+  }
+
+  getFileSize(name: string) : Observable<number> {
+    return this.httpClient.get<ApiResponse>(`${environment.apiUrl}/GetFileSize?file=${name}`).pipe(map((data) => data.result));
   }
 }

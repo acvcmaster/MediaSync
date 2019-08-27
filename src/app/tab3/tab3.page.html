@@ -13,12 +13,12 @@
   </ion-refresher>
 
   <ion-list *ngIf="fileList && fileList.length">
-    <ion-item *ngFor="let file of fileList">
+    <ion-item *ngFor="let file of fileList" [routerLink]="['/detail', file.name]" routerLinkActive="router-link-active">
       <ion-thumbnail>
-        <ion-img src="{{ environment.apiUrl }}/GetThumbnail?file={{ file.name }}&resolution=Small " alt=""></ion-img>
+        <ion-img src="{{ environment.apiUrl }}/GetThumbnail?file={{ file.name }}&resolution=Small" alt=""></ion-img>
       </ion-thumbnail>
-      <ion-label class="tab">{{ file.name }}</ion-label>
+      <ion-label class="tab">{{ file.name | noExtension | trim }}</ion-label>
     </ion-item>
   </ion-list>
-  
+
 </ion-content>

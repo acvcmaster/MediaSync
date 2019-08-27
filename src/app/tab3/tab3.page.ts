@@ -4,6 +4,7 @@ import { ApiService } from '../api/api.service';
 import { ChangeDetectorRef } from '@angular/core';
 import { environment } from 'src/environments/environment';
 
+
 @Component({
   selector: 'app-tab3',
   templateUrl: 'tab3.page.html',
@@ -18,10 +19,12 @@ export class Tab3Page implements OnInit {
   ngOnInit(): void {
     this.apiService.getFileIndex().subscribe((values) => this.fileList = values);
     this.environment = environment;
+    console.log(this.fileList);
   }
 
   onRefresh(event: any) { // TODO: implement logic
     setTimeout(() => {
+      console.log(this.fileList);
       event.target.complete();
     }, 1000);
   }
