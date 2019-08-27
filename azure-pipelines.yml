@@ -18,5 +18,5 @@ steps:
 - script: |
     npm install -g @angular/cli ionic
     npm install
-    ionic build --prod
+    ionic cordova run android
   displayName: 'npm install and build'
