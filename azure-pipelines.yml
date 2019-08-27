@@ -18,9 +18,8 @@ steps:
 - script: |
     npm install -g @angular/cli ionic
     npm install
-    npm run build --prod
-  displayName: 'npm install and build'
+  displayName: 'npm install'
 
 - script: |
-    npm run build --prod
+    ionic build --prod
   displayName: 'ionic build'
