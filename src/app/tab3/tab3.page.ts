@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FileIndexEntry } from '../api/types/file-index-entry';
 import { ApiService } from '../api/api.service';
-import { ChangeDetectorRef } from '@angular/core';
 import { environment } from 'src/environments/environment';
 
 
@@ -12,20 +11,19 @@ import { environment } from 'src/environments/environment';
 })
 export class Tab3Page implements OnInit {
 
-  constructor(private apiService: ApiService, private cdr: ChangeDetectorRef) { }
+  constructor(private apiService: ApiService) { }
   private fileList: FileIndexEntry[] = [];
   private environment: any;
 
   ngOnInit(): void {
     this.apiService.getFileIndex().subscribe((values) => this.fileList = values);
     this.environment = environment;
-    console.log(this.fileList);
   }
 
-  onRefresh(event: any) { // TODO: implement logic
-    setTimeout(() => {
-      console.log(this.fileList);
+  onRefresh(event: any) {
+    this.apiService.getFileIndex().subscribe((values) => {
+      this.fileList = values;
       event.target.complete();
-    }, 1000);
+    })
   }
 }
