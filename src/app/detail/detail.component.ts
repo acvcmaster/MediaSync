@@ -10,9 +10,9 @@ import { FileIndexEntry } from '../api/types/file-index-entry';
   styleUrls: ['./detail.component.scss'],
 })
 export class DetailComponent implements OnInit {
-  private file: FileIndexEntry;
-  private environment: any;
-  constructor(private route: ActivatedRoute, private apiService: ApiService) { 
+  public file: FileIndexEntry;
+  public environment: any;
+  constructor(private route: ActivatedRoute, private apiService: ApiService) {
     this.environment = environment;
     this.file = {name: '', size: 0};
   }

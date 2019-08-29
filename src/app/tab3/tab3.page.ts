@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { FileIndexEntry } from '../api/types/file-index-entry';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ApiService } from '../api/api.service';
 import { environment } from 'src/environments/environment';
+import { DownloadService } from '../api/download.service';
 
 
 @Component({
@@ -11,19 +11,45 @@ import { environment } from 'src/environments/environment';
 })
 export class Tab3Page implements OnInit {
 
-  constructor(private apiService: ApiService) { }
-  private fileList: FileIndexEntry[] = [];
-  private environment: any;
+  constructor(private apiService: ApiService, public downloadService: DownloadService, private changeDetectorRef: ChangeDetectorRef) { }
+  public fileList: any[] = [];
+  public environment: any;
 
   ngOnInit(): void {
-    this.apiService.getFileIndex().subscribe((values) => this.fileList = values);
+    this.apiService.getFileNames().subscribe((values) =>
+      this.fileList = values.map((name) => {
+        return {
+          name: name,
+          downloading: () => this.downloadService.isDownloading(name),
+          downloaded: () => this.downloadService.isDownloaded(name)
+        }
+      }));
     this.environment = environment;
+
   }
 
   onRefresh(event: any) {
-    this.apiService.getFileIndex().subscribe((values) => {
-      this.fileList = values;
+    this.apiService.getFileNames().subscribe((values) => {
+      this.fileList = values.map((name) => {
+        return {
+          name: name,
+          downloading: () => this.downloadService.isDownloading(name),
+          downloaded: () => this.downloadService.isDownloaded(name)
+        }
+      });
       event.target.complete();
-    })
+    });
+  }
+
+  downloadClicked(file: string, slidingItem: any) {
+    slidingItem.close();
+    this.downloadService.download(file, () => this.changeDetectorRef.detectChanges());
+    this.changeDetectorRef.detectChanges();
+  }
+
+  removeClicked(file: string, slidingItem: any) {
+    slidingItem.close();
+    this.downloadService.removeFile(file, () => this.changeDetectorRef.detectChanges());
+    this.changeDetectorRef.detectChanges();
   }
 }
