@@ -19,17 +19,9 @@ steps:
     npm install
     npm run build
   displayName: 'npm install and build'
-- task: ArchiveFiles@2
-  inputs:
-    rootFolderOrFile: '$(Build.BinariesDirectory)'
-    includeRootFolder: true
-    archiveType: 'zip'
-    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
-    replaceExistingArchive: true
 
-- task: CopyFilesOverSSH@0
+- task: PublishBuildArtifacts@1
   inputs:
-    sshEndpoint: 'Raspberry Pi'
-    sourceFolder: '$(Build.ArtifactStagingDirectory)'
-    contents: '**'
-    targetFolder: '/home/pi/Share/Azure-Releases'
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
