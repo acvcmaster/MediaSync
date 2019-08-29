@@ -13,12 +13,28 @@
   </ion-refresher>
 
   <ion-list *ngIf="fileList && fileList.length">
-    <ion-item *ngFor="let file of fileList" [routerLink]="['/detail', file.name]" routerLinkActive="router-link-active">
-      <ion-thumbnail>
-        <ion-img src="{{ environment.apiUrl }}/GetThumbnail?file={{ file.name }}&resolution=Small" alt=""></ion-img>
-      </ion-thumbnail>
-      <ion-label class="tab">{{ file.name | noExtension | trim }}</ion-label>
+    <ion-item>
+      <ion-icon name="download"></ion-icon>
+      <ion-label class="tab">Download all</ion-label>
     </ion-item>
+    <ion-item-sliding *ngFor="let file of fileList" #slidingItem>
+      <ion-item [routerLink]="['/detail', file.name]" routerLinkActive="router-link-active">
+        <ion-thumbnail>
+          <ion-img src="{{ environment.apiUrl }}/GetThumbnail?file={{ file.name }}&resolution=Small" alt=""></ion-img>
+        </ion-thumbnail>
+        <ion-label class="tab">
+          {{ file.name | noExtension | trim }}</ion-label>
+        <ion-icon name="checkmark-circle" *ngIf="!file.downloading() && file.downloaded()"></ion-icon>
+        <ion-spinner name="crescent" *ngIf="file.downloading()"></ion-spinner>
+      </ion-item>
+      <ion-item-options side="end">
+        <ion-item-option (click)="downloadClicked(file.name, slidingItem)" color="primary" *ngIf="!file.downloading() && !file.downloaded()">Download</ion-item-option>
+        <ion-item-option (click)="removeClicked(file.name, slidingItem)" color="danger" *ngIf="file.downloaded()">
+          <ion-icon name="warning"></ion-icon>
+          <p>Remove</p>
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
   </ion-list>
 
 </ion-content>
