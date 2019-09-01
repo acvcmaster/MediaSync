@@ -13,7 +13,7 @@
   </ion-refresher>
 
   <ion-list *ngIf="fileList && fileList.length">
-    <ion-item>
+    <ion-item (click)="downloadAll()">
       <ion-icon name="download"></ion-icon>
       <ion-label class="tab">Download all</ion-label>
     </ion-item>

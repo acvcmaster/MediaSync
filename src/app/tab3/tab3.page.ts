@@ -52,4 +52,13 @@ export class Tab3Page implements OnInit {
     this.downloadService.removeFile(file, () => this.changeDetectorRef.detectChanges());
     this.changeDetectorRef.detectChanges();
   }
+
+  downloadAll() {
+    if(this.fileList) {
+      this.fileList.forEach((value) => {
+        this.downloadService.download(value.name, () => this.changeDetectorRef.detectChanges());
+      });
+      this.changeDetectorRef.detectChanges();
+    }
+  }
 }

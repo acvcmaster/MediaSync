@@ -7,14 +7,31 @@
 </ion-header>
 
 <ion-content>
-  <ion-card class="welcome-card" *ngIf="file">
-    <img src="{{ environment.apiUrl }}/GetThumbnail?file={{ file.name }}&resolution=Large" alt="" />
+  <ion-card class="welcome-card" *ngIf="details">
+    <video #cardVideo preload="metadata" webkit-playsinline="webkit-playsinline" class="videoPlayer"
+      style="object-fit: contain" width="100%" (click)="play(cardVideo)"
+      poster="{{ environment.apiUrl }}/GetThumbnail?file={{ file.name }}&resolution=Large">
+      <source src="{{ environment.apiUrl }}/GetFile?file={{ file.name }}" type="video/mp4" />
+    </video>
     <ion-card-header>
       <ion-card-subtitle>File details</ion-card-subtitle>
-      <ion-card-title class="ion-text-center">{{ file.name | noExtension | trim }}</ion-card-title>
+      <ion-card-title class="ion-text-center">
+        {{ file.name | noExtension | trim }}
+        <ion-icon name="cloud-download" md="md-cloud-download" *ngIf="!file.downloading() && !file.downloaded()" (click)="downloadClicked()">
+        </ion-icon>
+        <ion-spinner name="crescent" *ngIf="file.downloading()"></ion-spinner>
+        <ion-icon name="checkmark-circle" *ngIf="!file.downloading() && file.downloaded()"></ion-icon>
+      </ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <p>Size : {{ file.size | inMB }}</p>
+      <p>Size : {{ details.length | inMB }}</p>
+      <p>Extension : {{ details.extension }}</p>
+      <p>Creation time : {{ details.creationTime }}</p>
+    </ion-card-content>
+  </ion-card>
+  <ion-card>
+    <ion-card-content>
+      <p *ngFor="let line of metadata">{{ line }}</p>
     </ion-card-content>
   </ion-card>
 </ion-content>
