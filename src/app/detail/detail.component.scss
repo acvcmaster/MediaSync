@@ -1,3 +1,23 @@
 video::-webkit-media-controls-fullscreen-button, video::-webkit-media-controls-play-button, video::-webkit-media-controls-pausebutton {
     display: none;
 }
+
+.wrapper{
+    display:table;
+    width:auto;
+    position:relative;
+    width:100%;
+}
+
+.playpause {
+    width:50%;
+    height:50%;
+    position:absolute;
+    left:0%;
+    right:0%;
+    top:0%;
+    bottom:0%;
+    margin:auto;
+    background-size:contain;
+    background-position: center;
+}

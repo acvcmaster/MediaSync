@@ -9,7 +9,7 @@ export class DownloadService {
 
   constructor() { }
   
-  public download(file: string, onFinish: () => void): void {
+  public download(file: string, onFinish?: () => void): void {
     if (this.isDownloading(file)) {
       return;
     }
@@ -18,7 +18,9 @@ export class DownloadService {
     setTimeout(() => {
       this.removeDownload(file);
       this.fileSystemMock.push(file);
-      onFinish();
+      if (onFinish) {
+        onFinish();
+      }
     }, 2000);
   }
 
