@@ -11,21 +11,27 @@ import { DownloadService } from '../api/download.service';
 })
 export class Tab3Page implements OnInit {
 
-  constructor(private apiService: ApiService, public downloadService: DownloadService, private changeDetectorRef: ChangeDetectorRef) { }
+  constructor(
+    private apiService: ApiService,
+    public downloadService: DownloadService,
+    private changeDetectorRef: ChangeDetectorRef) { }
+
   public fileList: any[] = [];
+  public fileListFiltered: any[] = [];
   public environment: any;
 
   ngOnInit(): void {
-    this.apiService.getFileNames().subscribe((values) =>
+    this.apiService.getFileNames().subscribe((values) => {
       this.fileList = values.map((name) => {
         return {
           name: name,
           downloading: () => this.downloadService.isDownloading(name),
           downloaded: () => this.downloadService.isDownloaded(name)
         }
-      }));
+      });
+      this.fileListFiltered = this.fileList;
+    });
     this.environment = environment;
-
   }
 
   onRefresh(event: any) {
@@ -53,12 +59,10 @@ export class Tab3Page implements OnInit {
     this.changeDetectorRef.detectChanges();
   }
 
-  downloadAll() {
-    if(this.fileList) {
-      this.fileList.forEach((value) => {
-        this.downloadService.download(value.name, () => this.changeDetectorRef.detectChanges());
-      });
-      this.changeDetectorRef.detectChanges();
-    }
+  onFilter(event: any) {
+    const filter: string = event.target.value;
+    this.fileListFiltered = this.fileList.filter((value) => {
+      return value.name.indexOf(filter) !== -1;
+    });
   }
 }

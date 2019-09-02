@@ -8,16 +8,23 @@
 
 <ion-content>
   <ion-card class="welcome-card" *ngIf="details">
-    <video #cardVideo preload="metadata" webkit-playsinline="webkit-playsinline" class="videoPlayer"
-      style="object-fit: contain" width="100%" (click)="play(cardVideo)"
-      poster="{{ environment.apiUrl }}/GetThumbnail?file={{ file.name }}&resolution=Large">
-      <source src="{{ environment.apiUrl }}/GetFile?file={{ file.name }}" type="video/mp4" />
-    </video>
+    <div class="wrapper" (click)="play()" *ngIf="supportedExtension(details.extension)">
+      <video #cardVideo preload="metadata" webkit-playsinline="webkit-playsinline" class="videoPlayer"
+        style="object-fit: contain" width="100%"
+        poster="{{ environment.apiUrl }}/GetThumbnail?file={{ file.name }}&resolution=Large">
+        <source src="{{ environment.apiUrl }}/GetFile?file={{ file.name }}" type="video/mp4" />
+      </video>
+      <div #overlay class="playpause">
+        <ion-icon name="play-circle" style="width: 100%; height: 100%"></ion-icon>
+      </div>
+    </div>
+    <img src="{{ environment.apiUrl }}/GetThumbnail?file={{ file.name }}&resolution=Large" *ngIf="!supportedExtension(details.extension)">
     <ion-card-header>
       <ion-card-subtitle>File details</ion-card-subtitle>
       <ion-card-title class="ion-text-center">
         {{ file.name | noExtension | trim }}
-        <ion-icon name="cloud-download" md="md-cloud-download" *ngIf="!file.downloading() && !file.downloaded()" (click)="downloadClicked()">
+        <ion-icon name="cloud-download" md="md-cloud-download" *ngIf="!file.downloading() && !file.downloaded()"
+          (click)="downloadClicked()">
         </ion-icon>
         <ion-spinner name="crescent" *ngIf="file.downloading()"></ion-spinner>
         <ion-icon name="checkmark-circle" *ngIf="!file.downloading() && file.downloaded()"></ion-icon>
@@ -25,8 +32,13 @@
     </ion-card-header>
     <ion-card-content>
       <p>Size : {{ details.length | inMB }}</p>
-      <p>Extension : {{ details.extension }}</p>
-      <p>Creation time : {{ details.creationTime }}</p>
+      <p>Extension :
+        <ion-badge color="{{ colorFromExtension(details.extension) }}" (click)="badgeToast(details.extension)">
+          {{ details.extension | noDot }}</ion-badge>
+      </p>
+      <p>Creation time : {{ details.creationTime | formatDate }}</p>
+      <p>Last acess time : {{ details.lastAccessTime | formatDate }}</p>
+      <p>Last write time : {{ details.lastWriteTime | formatDate }}</p>
     </ion-card-content>
   </ion-card>
   <ion-card>
