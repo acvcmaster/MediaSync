@@ -14,8 +14,8 @@
         poster="{{ environment.apiUrl }}/GetThumbnail?file={{ file.name }}&resolution=Large">
         <source src="{{ environment.apiUrl }}/GetFile?file={{ file.name }}" type="video/mp4" />
       </video>
-      <div #overlay class="playpause">
-        <ion-icon name="play-circle" style="width: 100%; height: 100%"></ion-icon>
+      <div #overlay class="play-btn-container">
+        <ion-icon name="play-circle" class="play-btn"></ion-icon>
       </div>
     </div>
     <img src="{{ environment.apiUrl }}/GetThumbnail?file={{ file.name }}&resolution=Large" *ngIf="!supportedExtension(details.extension)">
