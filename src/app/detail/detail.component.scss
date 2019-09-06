@@ -28,3 +28,9 @@ video::-webkit-media-controls-fullscreen-button, video::-webkit-media-controls-p
     background-size:contain;
     background-position: center;
 }
+
+.enable-transcode {
+    > div {
+        background-color:#32db64!important;
+    }
+}

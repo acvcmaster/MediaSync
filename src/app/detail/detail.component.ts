@@ -4,6 +4,7 @@ import { environment } from 'src/environments/environment';
 import { ApiService } from '../api/api.service';
 import { DownloadService } from '../api/download.service';
 import { ToastController, IonCheckbox } from '@ionic/angular';
+import { ToastButton } from '@ionic/core';
 
 @Component({
   selector: 'app-detail',
@@ -83,22 +84,43 @@ export class DetailComponent implements OnInit, OnDestroy  {
   }
 
   badgeToast(extension: string) {
+    let buttons: ToastButton[] = [];
+    let duration = 2000;
     if (extension) {
       let message: string = '';
-      let duration = 2000;
       if (this.transcodingChecked()) {
         message = this.supportedExtension(extension) ?
-          'This extension supports previewing on the app.' : 'Unsupported extension. The server can attempt to transcode this file into a playable format.';
-        duration = this.supportedExtension(extension) ? duration : 4000;
+          'This extension supports previewing on the app.' : 'Unsupported extension. The server will transcode this file into a playable format.';
       } else {
         message = this.supportedExtension(extension) ?
-          'This extension supports previewing on the app.' : 'Unsupported extension. Previewing will be disabled.';
+          'This extension supports previewing on the app.' : 'Unsupported extension. Previewing will be disabled. Click \'Enable\' to enable transcoding.';
+        if (!this.supportedExtension(extension)) {
+          duration = 4000;
+          buttons.push({
+            text: 'Enable',
+            side: 'end',
+            handler: () => this.transcoding.checked = true
+          });
+        }
       }
       this.toastController.create({
         message: message,
-        duration: duration
+        duration: duration,
+        buttons: buttons,
+        cssClass: 'enable-transcode'
       }).then((toast) => toast.present());
     }
+  }
+
+  transcodeToast() {
+    const message = 'Transcoding allows for smoother playback at the cost ' +
+      'of heavy CPU and memory usage in the server. This in turn limits the ' +
+      'number of concurrent transcoded streams that are possible. Enable ' +
+      'this only if you\'re having playback issues, or if playback is not possible.';
+    this.toastController.create({
+      message: message,
+      duration: 10000
+    }).then((toast) => toast.present());
   }
   
   supportedExtension(extension: string): boolean {

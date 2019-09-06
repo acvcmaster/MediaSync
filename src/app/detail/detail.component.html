@@ -50,6 +50,7 @@
       <p>
         <ion-checkbox #transcoding></ion-checkbox>
         <ion-label class="half-tab" style="vertical-align: top">Enable transcoding</ion-label>
+        <ion-icon class="half-tab" style="vertical-align: top" name="help-circle-outline" (click)="transcodeToast()"></ion-icon>
       </p>
       <p>Creation time : {{ details.creationTime | formatDate }}</p>
       <p>Last acess time : {{ details.lastAccessTime | formatDate }}</p>
