@@ -1,22 +1,23 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { ApiService } from '../api/api.service';
 import { DownloadService } from '../api/download.service';
-import { ToastController } from '@ionic/angular';
+import { ToastController, IonCheckbox } from '@ionic/angular';
 
 @Component({
   selector: 'app-detail',
   templateUrl: './detail.component.html',
   styleUrls: ['./detail.component.scss'],
 })
-export class DetailComponent implements OnInit {
+export class DetailComponent implements OnInit, OnDestroy  {
   public file: any;
   public details: any;
   public metadata: string[];
   public environment: any;
   @ViewChild('cardVideo', { static: false }) cardVideo: ElementRef;
   @ViewChild('overlay', { static: false }) overlay: ElementRef;
+  @ViewChild('transcoding', { static: false }) transcoding: IonCheckbox;
 
   constructor(
     private route: ActivatedRoute,
@@ -38,9 +39,13 @@ export class DetailComponent implements OnInit {
     this.apiService.getMetadata(name).subscribe((value) => this.metadata = value);
   }
 
+  ngOnDestroy(): void {
+    this.cardVideo.nativeElement.src = ''; // Breaks the ffmpeg pipe and forces it to quit (preventing huge memory leaks)
+  }
+
   play() {
 
-    if (!this.supportedExtension(this.details.extension)) {
+    if (!this.supportedExtension(this.details.extension) && !this.transcodingChecked()) {
       return;
     }
 
@@ -67,26 +72,46 @@ export class DetailComponent implements OnInit {
 
   colorFromExtension(extension: string) {
     if (extension) {
-      return this.supportedExtension(extension) ?
-        'success' : 'danger';
+      if (this.transcodingChecked()) {
+        return this.supportedExtension(extension) ?
+          'success' : 'warning';
+      } else {
+        return this.supportedExtension(extension) ?
+          'success' : 'danger';
+      }
     }
   }
 
   badgeToast(extension: string) {
     if (extension) {
-      const message: string = this.supportedExtension(extension) ?
-        'This extension supports previewing on the app.' : 'Unsupported extension. Previewing will be disabled.';
+      let message: string = '';
+      let duration = 2000;
+      if (this.transcodingChecked()) {
+        message = this.supportedExtension(extension) ?
+          'This extension supports previewing on the app.' : 'Unsupported extension. The server can attempt to transcode this file into a playable format.';
+        duration = this.supportedExtension(extension) ? duration : 4000;
+      } else {
+        message = this.supportedExtension(extension) ?
+          'This extension supports previewing on the app.' : 'Unsupported extension. Previewing will be disabled.';
+      }
       this.toastController.create({
         message: message,
-        duration: 2000
+        duration: duration
       }).then((toast) => toast.present());
     }
   }
   
   supportedExtension(extension: string): boolean {
     if (extension) {
-      const supportedFormats: string[] = [".mp4", ".webm"];
+      const supportedFormats: string[] = ['.mp4', '.webm'];
       return supportedFormats.indexOf(extension) !== -1;
     }
+  }
+
+  transcodingChecked() {
+    if (this.transcoding) {
+      return this.transcoding.checked;
+    }
+    return false;
   }
 }

@@ -8,7 +8,7 @@
 
 <ion-content>
   <ion-card class="welcome-card" *ngIf="details">
-    <div class="wrapper" (click)="play()" *ngIf="supportedExtension(details.extension)">
+    <div class="wrapper" (click)="play()" *ngIf="supportedExtension(details.extension) && !transcoding.checked">
       <video #cardVideo preload="metadata" webkit-playsinline="webkit-playsinline" class="videoPlayer"
         style="object-fit: contain" width="100%"
         poster="{{ environment.apiUrl }}/GetThumbnail?file={{ file.name }}&resolution=Large">
@@ -18,7 +18,18 @@
         <ion-icon name="play-circle" class="play-btn"></ion-icon>
       </div>
     </div>
-    <img src="{{ environment.apiUrl }}/GetThumbnail?file={{ file.name }}&resolution=Large" *ngIf="!supportedExtension(details.extension)">
+    <div class="wrapper" (click)="play()" *ngIf="transcoding.checked">
+      <video #cardVideo webkit-playsinline="webkit-playsinline" class="videoPlayer"
+        style="object-fit: contain" width="100%"
+        poster="{{ environment.apiUrl }}/GetThumbnail?file={{ file.name }}&resolution=Large">
+        <source src="{{ environment.apiUrl }}/GetFileTranscoded?file={{ file.name }}" type="video/mp4" />
+      </video>
+      <div #overlay class="play-btn-container">
+        <ion-icon name="play-circle" class="play-btn"></ion-icon>
+      </div>
+    </div>
+    <img #thumbnail src="{{ environment.apiUrl }}/GetThumbnail?file={{ file.name }}&resolution=Large"
+      *ngIf="!supportedExtension(details.extension) && !transcoding.checked">
     <ion-card-header>
       <ion-card-subtitle>File details</ion-card-subtitle>
       <ion-card-title class="ion-text-center">
@@ -33,8 +44,12 @@
     <ion-card-content>
       <p>Size : {{ details.length | inMB }}</p>
       <p>Extension :
-        <ion-badge color="{{ colorFromExtension(details.extension) }}" (click)="badgeToast(details.extension)">
+        <ion-badge color="{{ colorFromExtension(details.extension) }}" (click)="badgeToast(details.extension)" style="vertical-align: middle">
           {{ details.extension | noDot }}</ion-badge>
+      </p>
+      <p>
+        <ion-checkbox #transcoding></ion-checkbox>
+        <ion-label class="half-tab" style="vertical-align: top">Enable transcoding</ion-label>
       </p>
       <p>Creation time : {{ details.creationTime | formatDate }}</p>
       <p>Last acess time : {{ details.lastAccessTime | formatDate }}</p>
