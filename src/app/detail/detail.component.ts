@@ -1,9 +1,10 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { ApiService } from '../api/api.service';
 import { DownloadService } from '../api/download.service';
-import { ToastController } from '@ionic/angular';
+import { ToastController, IonCheckbox } from '@ionic/angular';
+import { ToastButton } from '@ionic/core';
 
 @Component({
   selector: 'app-detail',
@@ -15,8 +16,7 @@ export class DetailComponent implements OnInit {
   public details: any;
   public metadata: string[];
   public environment: any;
-  @ViewChild('cardVideo', { static: false }) cardVideo: ElementRef;
-  @ViewChild('overlay', { static: false }) overlay: ElementRef;
+  @ViewChild('transcoding', { static: false }) transcoding: IonCheckbox;
 
   constructor(
     private route: ActivatedRoute,
@@ -38,28 +38,6 @@ export class DetailComponent implements OnInit {
     this.apiService.getMetadata(name).subscribe((value) => this.metadata = value);
   }
 
-  play() {
-
-    if (!this.supportedExtension(this.details.extension)) {
-      return;
-    }
-
-    const cardVideo = this.cardVideo.nativeElement;
-    const overlay = this.overlay.nativeElement;
-
-    if (!cardVideo || !overlay) {
-      return;
-    }
-
-    if (cardVideo.paused) {
-      cardVideo.play();
-      overlay.style.opacity = 0;
-    } else {
-      cardVideo.pause();
-      overlay.style.opacity = 1;
-    }
-  }
-
   downloadClicked() {
     this.downloadService.download(this.file.name, () => this.changeDetectorRef.detectChanges());
     this.changeDetectorRef.detectChanges();
@@ -67,26 +45,66 @@ export class DetailComponent implements OnInit {
 
   colorFromExtension(extension: string) {
     if (extension) {
-      return this.supportedExtension(extension) ?
-        'success' : 'danger';
+      if (this.transcodingChecked()) {
+        return this.supportedExtension(extension) ?
+          'success' : 'warning';
+      } else {
+        return this.supportedExtension(extension) ?
+          'success' : 'danger';
+      }
     }
   }
 
   badgeToast(extension: string) {
+    let buttons: ToastButton[] = [];
+    let duration = 2000;
     if (extension) {
-      const message: string = this.supportedExtension(extension) ?
-        'This extension supports previewing on the app.' : 'Unsupported extension. Previewing will be disabled.';
+      let message: string = '';
+      if (this.transcodingChecked()) {
+        message = this.supportedExtension(extension) ?
+          'This extension supports previewing on the app.' : 'Unsupported extension. The server will transcode this file into a playable format.';
+      } else {
+        message = this.supportedExtension(extension) ?
+          'This extension supports previewing on the app.' : 'Unsupported extension. Previewing will be disabled. Click \'Enable\' to enable transcoding.';
+        if (!this.supportedExtension(extension)) {
+          duration = 4000;
+          buttons.push({
+            text: 'Enable',
+            side: 'end',
+            handler: () => this.transcoding.checked = true
+          });
+        }
+      }
       this.toastController.create({
         message: message,
-        duration: 2000
+        duration: duration,
+        buttons: buttons
       }).then((toast) => toast.present());
     }
+  }
+
+  transcodeToast() {
+    const message = 'Transcoding allows for smoother playback at the cost ' +
+      'of heavy CPU and memory usage in the server. This in turn limits the ' +
+      'number of concurrent transcoded streams that are possible. Enable ' +
+      'this only if you\'re having playback issues, or if playback is not possible.';
+    this.toastController.create({
+      message: message,
+      duration: 10000
+    }).then((toast) => toast.present());
   }
   
   supportedExtension(extension: string): boolean {
     if (extension) {
-      const supportedFormats: string[] = [".mp4", ".webm"];
+      const supportedFormats: string[] = ['.mp4', '.webm'];
       return supportedFormats.indexOf(extension) !== -1;
     }
+  }
+
+  transcodingChecked() {
+    if (this.transcoding) {
+      return this.transcoding.checked;
+    }
+    return false;
   }
 }

@@ -4,6 +4,7 @@ import { DetailComponent } from './detail.component';
 import { RouterModule, Routes } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { SharedModule } from '../shared/shared.module';
+import { VideoComponent } from './video/video.component';
 
 
 const routes: Routes = [
@@ -13,7 +14,7 @@ const routes: Routes = [
   }];
 
 @NgModule({
-  declarations: [DetailComponent],
+  declarations: [DetailComponent, VideoComponent],
   imports: [
     CommonModule,
     IonicModule,
