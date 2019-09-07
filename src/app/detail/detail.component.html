@@ -8,26 +8,9 @@
 
 <ion-content>
   <ion-card class="welcome-card" *ngIf="details">
-    <div class="wrapper" (click)="play()" *ngIf="supportedExtension(details.extension) && !transcoding.checked">
-      <video #cardVideo preload="metadata" webkit-playsinline="webkit-playsinline" class="videoPlayer"
-        style="object-fit: contain" width="100%"
-        poster="{{ environment.apiUrl }}/GetThumbnail?file={{ file.name }}&resolution=Large">
-        <source src="{{ environment.apiUrl }}/GetFile?file={{ file.name }}" type="video/mp4" />
-      </video>
-      <div #overlay class="play-btn-container">
-        <ion-icon name="play-circle" class="play-btn"></ion-icon>
-      </div>
-    </div>
-    <div class="wrapper" (click)="play()" *ngIf="transcoding.checked">
-      <video #cardVideo webkit-playsinline="webkit-playsinline" class="videoPlayer"
-        style="object-fit: contain" width="100%"
-        poster="{{ environment.apiUrl }}/GetThumbnail?file={{ file.name }}&resolution=Large">
-        <source src="{{ environment.apiUrl }}/GetFileTranscoded?file={{ file.name }}" type="video/mp4" />
-      </video>
-      <div #overlay class="play-btn-container">
-        <ion-icon name="play-circle" class="play-btn"></ion-icon>
-      </div>
-    </div>
+    <app-video *ngIf="supportedExtension(details.extension) && !transcoding.checked"
+      [file]="file.name" [transcode]="false" [preload]="true"></app-video>
+    <app-video *ngIf="transcoding.checked" [file]="file.name" [transcode]="true"></app-video>
     <img #thumbnail src="{{ environment.apiUrl }}/GetThumbnail?file={{ file.name }}&resolution=Large"
       *ngIf="!supportedExtension(details.extension) && !transcoding.checked">
     <ion-card-header>

@@ -1,7 +1,8 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { ApiService } from '../api/api.service';
 import { environment } from 'src/environments/environment';
 import { DownloadService } from '../api/download.service';
+import { IonSearchbar } from '@ionic/angular';
 
 
 @Component({
@@ -19,6 +20,7 @@ export class Tab3Page implements OnInit {
   public fileList: any[] = [];
   public fileListFiltered: any[] = [];
   public environment: any;
+  @ViewChild('searchBar', { static: false }) searchBar: IonSearchbar;
 
   ngOnInit(): void {
     this.apiService.getFileNames().subscribe((values) => {
@@ -43,6 +45,9 @@ export class Tab3Page implements OnInit {
           downloaded: () => this.downloadService.isDownloaded(name)
         }
       });
+      const filterEvent = event;
+      filterEvent.target.value = this.searchBar.value;
+      this.onFilter(filterEvent);
       event.target.complete();
     });
   }
@@ -62,7 +67,7 @@ export class Tab3Page implements OnInit {
   onFilter(event: any) {
     const filter: string = event.target.value;
     this.fileListFiltered = this.fileList.filter((value) => {
-      return value.name.indexOf(filter) !== -1;
+      return value.name.toLowerCase().indexOf(filter.toLowerCase()) !== -1;
     });
   }
 }

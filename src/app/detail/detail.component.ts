@@ -11,13 +11,11 @@ import { ToastButton } from '@ionic/core';
   templateUrl: './detail.component.html',
   styleUrls: ['./detail.component.scss'],
 })
-export class DetailComponent implements OnInit, OnDestroy  {
+export class DetailComponent implements OnInit {
   public file: any;
   public details: any;
   public metadata: string[];
   public environment: any;
-  @ViewChild('cardVideo', { static: false }) cardVideo: ElementRef;
-  @ViewChild('overlay', { static: false }) overlay: ElementRef;
   @ViewChild('transcoding', { static: false }) transcoding: IonCheckbox;
 
   constructor(
@@ -38,32 +36,6 @@ export class DetailComponent implements OnInit, OnDestroy  {
     };
     this.apiService.getDetails(name).subscribe((value) => this.details = value);
     this.apiService.getMetadata(name).subscribe((value) => this.metadata = value);
-  }
-
-  ngOnDestroy(): void {
-    this.cardVideo.nativeElement.src = ''; // Breaks the ffmpeg pipe and forces it to quit (preventing huge memory leaks)
-  }
-
-  play() {
-
-    if (!this.supportedExtension(this.details.extension) && !this.transcodingChecked()) {
-      return;
-    }
-
-    const cardVideo = this.cardVideo.nativeElement;
-    const overlay = this.overlay.nativeElement;
-
-    if (!cardVideo || !overlay) {
-      return;
-    }
-
-    if (cardVideo.paused) {
-      cardVideo.play();
-      overlay.style.opacity = 0;
-    } else {
-      cardVideo.pause();
-      overlay.style.opacity = 1;
-    }
   }
 
   downloadClicked() {
@@ -106,8 +78,7 @@ export class DetailComponent implements OnInit, OnDestroy  {
       this.toastController.create({
         message: message,
         duration: duration,
-        buttons: buttons,
-        cssClass: 'enable-transcode'
+        buttons: buttons
       }).then((toast) => toast.present());
     }
   }
