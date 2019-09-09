@@ -28,7 +28,7 @@ export class SettingsPage implements AfterViewInit {
   }
 
   transcodeToast() {
-    const message = 'Transcoding allows for smoother playback at the cost ' +
+    const message = 'Transcoding improves compatibility at the cost ' +
       'of heavy CPU and memory usage in the server. This in turn limits the ' +
       'number of concurrent transcoded streams that are possible. Enable ' +
       'this only if you\'re having playback issues, or if playback is not possible.';
