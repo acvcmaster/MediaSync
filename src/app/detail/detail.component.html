@@ -8,11 +8,11 @@
 
 <ion-content>
   <ion-card class="welcome-card" *ngIf="details">
-    <app-video *ngIf="supportedExtension(details.extension) && !transcoding.checked"
+    <app-video *ngIf="supportedExtension(details.extension) && !transcodingChecked()"
       [file]="file.name" [transcode]="false" [preload]="true"></app-video>
-    <app-video *ngIf="transcoding.checked" [file]="file.name" [transcode]="true"></app-video>
+    <app-video *ngIf="transcodingChecked()" [file]="file.name" [transcode]="true" [quality]="quality()"></app-video>
     <img #thumbnail src="{{ environment.apiUrl }}/GetThumbnail?file={{ file.name }}&resolution=Large"
-      *ngIf="!supportedExtension(details.extension) && !transcoding.checked">
+      *ngIf="!supportedExtension(details.extension) && !transcodingChecked()">
     <ion-card-header>
       <ion-card-subtitle>File details</ion-card-subtitle>
       <ion-card-title class="ion-text-center">
@@ -27,13 +27,8 @@
     <ion-card-content>
       <p>Size : {{ details.length | inMB }}</p>
       <p>Extension :
-        <ion-badge color="{{ colorFromExtension(details.extension) }}" (click)="badgeToast(details.extension)" style="vertical-align: middle">
+        <ion-badge color="{{ colorFromExtension(details.extension) }}" (click)="badgeToast(details.extension)" style="vertical-align: top">
           {{ details.extension | noDot }}</ion-badge>
-      </p>
-      <p>
-        <ion-checkbox #transcoding></ion-checkbox>
-        <ion-label class="half-tab" style="vertical-align: top">Enable transcoding</ion-label>
-        <ion-icon class="half-tab" style="vertical-align: top" name="help-circle-outline" (click)="transcodeToast()"></ion-icon>
       </p>
       <p>Creation time : {{ details.creationTime | formatDate }}</p>
       <p>Last acess time : {{ details.lastAccessTime | formatDate }}</p>

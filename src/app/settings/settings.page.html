@@ -14,16 +14,23 @@
     <ion-item>
       <ion-icon slot="start" color="medium" name="color-wand"></ion-icon>
       <ion-label>Media transcoding</ion-label>
-      <ion-toggle #transcodingToggle></ion-toggle>
+      <ion-toggle #transcodingToggle (ionChange)="onTranscodeChange()"></ion-toggle>
+      <ion-icon slot="end" color="medium" name="alert" (click)="transcodeToast()"></ion-icon>
     </ion-item>
     <ion-item disabled="{{ !transcodingToggle.checked }}">
       <ion-icon slot="start" color="medium" name="film"></ion-icon>
       <ion-label>Quality preset</ion-label>
-      <ion-select value="High" interface="action-sheet">
+      <ion-select #qualitySelector interface="action-sheet" (ionChange)="onQualityChange()">
         <ion-select-option value="High">High</ion-select-option>
         <ion-select-option value="Medium">Medium</ion-select-option>
         <ion-select-option value="Low">Low</ion-select-option>
       </ion-select>
+    </ion-item>
+    <ion-item disabled="true">
+    <!-- <ion-item disabled="{{ !transcodingToggle.checked }}"> -->
+      <ion-icon slot="start" color="medium" name="flash"></ion-icon>
+      <ion-label>Hardware acceleration</ion-label>
+      <ion-toggle></ion-toggle>
     </ion-item>
   </ion-list>
 </ion-content>
