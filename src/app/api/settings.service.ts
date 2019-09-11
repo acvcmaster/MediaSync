@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { File } from '@ionic-native/file/ngx';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -6,32 +8,64 @@ import { Injectable } from '@angular/core';
 export class SettingsService {
 
   private settings: { [id: string] : string | boolean; } = { };
+  private dataDir: string;
+  private settingsDir: string;
+  public settingsChanged: Subject<unknown> = new Subject();
 
-  constructor() {
-    this.loadFromFile(); // mock
+  constructor(private file: File) {
+    this.dataDir = this.file.dataDirectory;
+    this.settingsDir = `${this.dataDir}settings`; 
+    this.loadFromFile();
   }
 
   public loadFromFile() {
-    this.settings['transcode'] = false;
-    this.settings['quality'] = 'Medium';
+    this.file.listDir(this.dataDir, 'settings').then((values) => {
+      const result = values.find((value) => value.name === 'settings') !== undefined;
+      if (result) {
+        this.getObject(); // file already exists
+      } else {
+        this.initializeSettings(); // initialize file with default values
+      }
+    }).catch(_ => this.initializeSettings());
   }
 
-  public change(key: string, value: string | boolean): boolean {
+  private initializeSettings() {
+      // First time default settings
+      this.settings['transcode'] = true;
+      this.settings['quality'] = 'High';
+      this.save();
+  }
+
+  public change(key: string, value: string | boolean) {
     const setting = this.settings[key];
     if (setting !== undefined && setting !== null) {
-      const lastValue = this.settings[key];
       this.settings[key] = value;
-      const success = this.save();
-      if (!success) {
-        this.settings[key] = lastValue;
-      }
-      return success;
+      this.settingsChanged.next();
+      this.save();
     }
-    return false;
   }
 
-  public save(): boolean { // mock
-    return true;
+  public save(): boolean {
+    let result: boolean = false;
+    this.file.checkDir(this.dataDir, 'settings').then(_ => {
+      this.file.writeFile(this.settingsDir, 'settings', this.getText(), { replace: true }).then(_ => result = true);
+    }).catch(_ => {
+      this.file.createDir(this.dataDir, 'settings', false).then(_ => {
+        this.file.writeFile(this.settingsDir, 'settings', this.getText(), { replace: true }).then(_ => result = true);
+      });
+    });
+    return result;
+  }
+
+  private getText(): string {
+    return JSON.stringify(this.settings);
+  }
+
+  private getObject() {
+    this.file.readAsText(this.settingsDir, 'settings').then((contents) => {
+      this.settings = JSON.parse(contents);
+      this.settingsChanged.next();
+    });
   }
 
   public get(key: string) {

@@ -1,22 +1,25 @@
-import { Component, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, ViewChild, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { IonToggle, IonSelect, ToastController } from '@ionic/angular';
 import { SettingsService } from '../api/settings.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-settings',
   templateUrl: 'settings.page.html',
   styleUrls: ['settings.page.scss']
 })
-export class SettingsPage implements AfterViewInit {
+export class SettingsPage implements OnDestroy {
 
   @ViewChild('transcodingToggle', { static: false }) transcodingToggle: IonToggle;
   @ViewChild('qualitySelector', { static: false }) qualitySelector: IonSelect;
+  private subscriptions: Subscription[] = [];
 
-  constructor(private settingsService: SettingsService, private toastController: ToastController) {}
+  constructor(public settingsService: SettingsService, private toastController: ToastController, private changeDetectorRef: ChangeDetectorRef) {
+    this.subscriptions.push(this.settingsService.settingsChanged.subscribe(() => this.changeDetectorRef.detectChanges()));
+  }
 
-  ngAfterViewInit() {
-    this.transcodingToggle.checked = this.settingsService.get('transcode') as boolean;
-    this.qualitySelector.value = this.settingsService.get('quality') as string;
+  ngOnDestroy() {
+    this.subscriptions.forEach((subscription) => subscription.unsubscribe());
   }
 
   onTranscodeChange() {
