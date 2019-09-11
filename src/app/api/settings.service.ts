@@ -42,7 +42,7 @@ export class SettingsService {
   private defaultValues() {
     this.settings['transcode'] = false;
     this.settings['quality'] = 'Medium';
-    this.settings['serverIp'] = '10.0.0.50';
+    this.settings['serverIp'] = '10.0.0.31';
     this.settingsChanged.next();
   }
 

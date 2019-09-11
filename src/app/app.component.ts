@@ -20,6 +20,7 @@ export class AppComponent {
   ) {
     this.initializeApp();
     this.getApiUrlChanges();
+    environment.apiUrl = `http://${this.settingsService.get('serverIp')}:8080/api/File`;
   }
 
   initializeApp() {
