@@ -14,8 +14,12 @@ export class SettingsService {
 
   constructor(private file: File) {
     this.dataDir = this.file.dataDirectory;
-    this.settingsDir = `${this.dataDir}settings`; 
-    this.loadFromFile();
+    if (this.dataDir) {
+      this.settingsDir = `${this.dataDir}settings`; 
+      this.loadFromFile();
+    } else {
+      this.defaultValues();
+    }
   }
 
   public loadFromFile() {
@@ -30,10 +34,14 @@ export class SettingsService {
   }
 
   private initializeSettings() {
-      // First time default settings
-      this.settings['transcode'] = true;
-      this.settings['quality'] = 'High';
-      this.save();
+    // First time default settings
+    this.defaultValues();
+    this.save();
+  }
+
+  private defaultValues() {
+    this.settings['transcode'] = false;
+    this.settings['quality'] = 'Medium';
   }
 
   public change(key: string, value: string | boolean) {
@@ -41,7 +49,9 @@ export class SettingsService {
     if (setting !== undefined && setting !== null) {
       this.settings[key] = value;
       this.settingsChanged.next();
-      this.save();
+      if (this.dataDir) {
+        this.save();
+      }
     }
   }
 

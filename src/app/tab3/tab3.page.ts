@@ -3,6 +3,8 @@ import { ApiService } from '../api/api.service';
 import { environment } from 'src/environments/environment';
 import { DownloadService } from '../api/download.service';
 import { IonSearchbar } from '@ionic/angular';
+import { catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 
 @Component({
@@ -37,8 +39,11 @@ export class Tab3Page implements OnInit {
   }
 
   onRefresh(event: any) {
-    this.apiService.getFileNames().subscribe((values) => {
-      this.fileList = values.map((name) => {
+    this.apiService.getFileNames().pipe(catchError(_ => { // On error
+      event.target.complete(); // stop refresher
+      return of([] as string[]); // fallback value
+    })).subscribe((values) => {
+      this.fileList = values.map((name) => { // On success
         return {
           name: name,
           downloading: () => this.downloadService.isDownloading(name),
