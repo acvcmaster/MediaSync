@@ -42,6 +42,14 @@ export class SettingsService {
   private defaultValues() {
     this.settings['transcode'] = false;
     this.settings['quality'] = 'Medium';
+    this.settings['serverIp'] = '10.0.0.50';
+    this.settingsChanged.next();
+  }
+
+  public changeIf(key: string, value: string | boolean, condition: (value: string | boolean) => boolean) {
+    if (condition(value)) {
+      this.change(key, value);
+    }
   }
 
   public change(key: string, value: string | boolean) {

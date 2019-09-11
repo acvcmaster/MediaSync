@@ -31,6 +31,12 @@
       <ion-icon slot="start" color="medium" name="flash"></ion-icon>
       <ion-label>Hardware acceleration</ion-label>
       <ion-toggle></ion-toggle>
+      <ion-icon slot="end" color="medium" name="alert"></ion-icon>
+    </ion-item>
+    <ion-item>
+      <ion-icon slot="start" color="medium" name="desktop"></ion-icon>
+      <ion-label>IP :</ion-label>
+      <ion-input #serverIpInput value="{{ settingsService.get('serverIp') }}" placeholder="Server IP" (ionInput)="onServerIpChange()"></ion-input>
     </ion-item>
   </ion-list>
 </ion-content>

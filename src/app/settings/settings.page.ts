@@ -1,5 +1,5 @@
 import { Component, ViewChild, ChangeDetectorRef, OnDestroy } from '@angular/core';
-import { IonToggle, IonSelect, ToastController } from '@ionic/angular';
+import { IonToggle, IonSelect, ToastController, IonInput } from '@ionic/angular';
 import { SettingsService } from '../api/settings.service';
 import { Subscription } from 'rxjs';
 
@@ -12,6 +12,7 @@ export class SettingsPage implements OnDestroy {
 
   @ViewChild('transcodingToggle', { static: false }) transcodingToggle: IonToggle;
   @ViewChild('qualitySelector', { static: false }) qualitySelector: IonSelect;
+  @ViewChild('serverIpInput', { static: false }) serverIpInput: IonInput;
   private subscriptions: Subscription[] = [];
 
   constructor(public settingsService: SettingsService, private toastController: ToastController, private changeDetectorRef: ChangeDetectorRef) {
@@ -30,6 +31,10 @@ export class SettingsPage implements OnDestroy {
     this.settingsService.change('quality', this.qualitySelector.value);
   }
 
+  onServerIpChange() {
+    this.settingsService.change('serverIp', this.serverIpInput.value);
+  }
+
   transcodeToast() {
     const message = 'Transcoding improves compatibility at the cost ' +
       'of heavy CPU and memory usage in the server. This in turn limits the ' +
@@ -37,7 +42,7 @@ export class SettingsPage implements OnDestroy {
       'this only if you\'re having playback issues, or if playback is not possible.';
     this.toastController.create({
       message: message,
-      duration: 10000
+      duration: 8000
     }).then((toast) => toast.present());
   }
 }
