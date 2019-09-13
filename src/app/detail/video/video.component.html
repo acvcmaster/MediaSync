@@ -1,9 +1,4 @@
-<div class="wrapper" (click)="onClick()">
-  <video #videoElement webkit-playsinline="webkit-playsinline" class="videoPlayer"
-    style="object-fit: contain" width="100%" poster="{{ getPoster() }}">
-    <source src="{{ getSrc() }}" type="{{ type }}" />
-  </video>
-  <div #overlay class="play-btn-container">
-    <ion-icon name="play-circle" class="play-btn"></ion-icon>
-  </div>
-</div>
+<video #videoElement controls playsinline webkit-playsinline
+style="object-fit: contain" width="100%" poster="{{ getPoster() }}">
+<source src="{{ getSrc() }}" type="{{ type }}" />
+</video>

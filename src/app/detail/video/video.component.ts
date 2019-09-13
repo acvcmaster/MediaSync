@@ -14,12 +14,11 @@ export class VideoComponent implements AfterViewInit, OnDestroy {
   @Input() type = 'video/mp4';
   @Input() quality = 'High';
   @ViewChild('videoElement', { static: false }) videoElement: ElementRef;
-  @ViewChild('overlay', { static: false }) overlay: ElementRef;
   
   constructor() { }
 
   ngAfterViewInit() {
-    if (this.preload && !this.transcode) {
+    if (this.preload) {
       this.videoElement.nativeElement.preload = 'metadata';
     }
   }
@@ -41,23 +40,6 @@ export class VideoComponent implements AfterViewInit, OnDestroy {
       } else {
         return `${environment.apiUrl}/GetFileTranscoded?file=${this.file}&quality=${this.quality}`
       }
-    }
-  }
-
-  onClick() {
-    const video = this.videoElement.nativeElement;
-    const overlay = this.overlay.nativeElement;
-
-    if (!video || !overlay) {
-      return;
-    }
-
-    if (video.paused) {
-      video.play();
-      overlay.style.opacity = 0;
-    } else {
-      video.pause();
-      overlay.style.opacity = 1;
     }
   }
 }
