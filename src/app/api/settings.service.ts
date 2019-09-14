@@ -44,7 +44,7 @@ export class SettingsService {
     this.settings['quality'] = 'Medium';
     this.settings['serverIp'] = 'localhost';
     this.settings['hardwareAcceleration'] = false;
-    this.settings['changeContainersOnly'] = true;
+    this.settings['changeContainersOnly'] = false;
     this.settingsChanged.next();
   }
 
