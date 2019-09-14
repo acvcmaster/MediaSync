@@ -26,7 +26,7 @@
         <ion-select-option value="Low">Low</ion-select-option>
       </ion-select>
     </ion-item>
-    <ion-item disabled="{{ containerToggle.checked }}">
+    <ion-item disabled="{{ containerToggle.checked || !transcodingToggle.checked }}">
       <ion-icon slot="start" color="medium" name="flash"></ion-icon>
       <ion-label>Hardware acceleration</ion-label>
       <ion-toggle checked="{{ settingsService.get('hardwareAcceleration') }}" #accelerationToggle (ionChange)="onAccelerationChange()"></ion-toggle>
