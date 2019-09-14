@@ -93,4 +93,8 @@ export class DetailComponent implements OnInit {
   quality(): string {
     return this.settingsService.get('quality') as string;
   }
+
+  changeContainersOnlyChecked() {
+    return this.settingsService.get('changeContainersOnly') as boolean;
+  }
 }

@@ -17,7 +17,7 @@
       <ion-toggle checked="{{ settingsService.get('transcode') }}" #transcodingToggle (ionChange)="onTranscodeChange()"></ion-toggle>
       <ion-icon slot="end" color="medium" name="alert" (click)="transcodeToast()"></ion-icon>
     </ion-item>
-    <ion-item disabled="{{ !transcodingToggle.checked }}">
+    <ion-item disabled="{{ !transcodingToggle.checked || containerToggle.checked}}">
       <ion-icon slot="start" color="medium" name="film"></ion-icon>
       <ion-label>Quality preset</ion-label>
       <ion-select value="{{ settingsService.get('quality') }}" #qualitySelector interface="action-sheet" (ionChange)="onQualityChange()">
@@ -26,17 +26,22 @@
         <ion-select-option value="Low">Low</ion-select-option>
       </ion-select>
     </ion-item>
-    <ion-item disabled="true">
-    <!-- <ion-item disabled="{{ !transcodingToggle.checked }}"> -->
+    <ion-item disabled="{{ containerToggle.checked }}">
       <ion-icon slot="start" color="medium" name="flash"></ion-icon>
       <ion-label>Hardware acceleration</ion-label>
-      <ion-toggle></ion-toggle>
-      <ion-icon slot="end" color="medium" name="alert"></ion-icon>
+      <ion-toggle checked="{{ settingsService.get('hardwareAcceleration') }}" #accelerationToggle (ionChange)="onAccelerationChange()"></ion-toggle>
+      <ion-icon slot="end" color="medium" name="alert" (click)="accelerationToast()"></ion-icon>
     </ion-item>
     <ion-item>
-      <ion-icon slot="start" color="medium" name="desktop"></ion-icon>
-      <ion-label>IP :</ion-label>
+      <ion-icon slot="start" color="medium" name="laptop"></ion-icon>
+      <ion-label>Server address :</ion-label>
       <ion-input #serverIpInput value="{{ settingsService.get('serverIp') }}" placeholder="Server IP" (ionInput)="onServerIpChange()"></ion-input>
     </ion-item>
+    <ion-item  disabled="{{ !transcodingToggle.checked }}">
+        <ion-icon slot="start" color="medium" name="cube"></ion-icon>
+        <ion-label>Change containers only</ion-label>
+        <ion-toggle checked="{{ settingsService.get('changeContainersOnly') }}" #containerToggle (ionChange)="onContainerChange()"></ion-toggle>
+        <ion-icon slot="end" color="medium" name="alert" (click)="containerToast()"></ion-icon>
+      </ion-item>
   </ion-list>
 </ion-content>

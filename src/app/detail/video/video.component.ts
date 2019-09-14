@@ -10,6 +10,7 @@ export class VideoComponent implements AfterViewInit, OnDestroy {
 
   @Input() file: string;
   @Input() transcode: boolean = false;
+  @Input() changeContainersOnly: boolean = false;
   @Input() preload: boolean = false;
   @Input() type = 'video/mp4';
   @Input() quality = 'High';
@@ -38,7 +39,11 @@ export class VideoComponent implements AfterViewInit, OnDestroy {
       if (!this.transcode) {
         return `${environment.apiUrl}/GetFile?file=${this.file}`
       } else {
-        return `${environment.apiUrl}/GetFileTranscoded?file=${this.file}&quality=${this.quality}`
+        if (!this.changeContainersOnly) {
+          return `${environment.apiUrl}/GetFileTranscoded?file=${this.file}&quality=${this.quality}`
+        } else {
+          return `${environment.apiUrl}/GetFileTranscoded?file=${this.file}&changeContainersOnly=${this.changeContainersOnly}`
+        }
       }
     }
   }

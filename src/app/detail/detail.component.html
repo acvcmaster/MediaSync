@@ -10,7 +10,7 @@
   <ion-card class="welcome-card" *ngIf="details">
     <app-video *ngIf="supportedExtension(details.extension) && !transcodingChecked()"
       [file]="file.name" [transcode]="false"></app-video>
-    <app-video *ngIf="transcodingChecked()" [file]="file.name" [transcode]="true" [quality]="quality()"></app-video>
+    <app-video *ngIf="transcodingChecked()" [file]="file.name" [transcode]="true" [quality]="quality()" [changeContainersOnly]="changeContainersOnlyChecked()"></app-video>
     <img #thumbnail src="{{ environment.apiUrl }}/GetThumbnail?file={{ file.name }}&resolution=Large"
       *ngIf="!supportedExtension(details.extension) && !transcodingChecked()">
     <ion-card-header>
