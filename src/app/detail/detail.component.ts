@@ -41,7 +41,7 @@ export class DetailComponent implements OnInit {
   }
 
   downloadClicked() {
-    this.downloadService.download(this.file.name, () => this.changeDetectorRef.detectChanges());
+    this.downloadService.addToQueue(this.file.name, () => this.changeDetectorRef.detectChanges());
     this.changeDetectorRef.detectChanges();
   }
 

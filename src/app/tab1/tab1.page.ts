@@ -18,7 +18,7 @@ export class Tab1Page {
   syncAll() {
     this.apiService.getFileNames().subscribe((values) =>
       values.forEach((value) => {
-        this.downloadService.download(value);
+        this.downloadService.addToQueue(value);
         this.router.navigate(['/tabs/tab3']);
       }));
   }

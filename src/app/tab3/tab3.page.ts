@@ -59,7 +59,7 @@ export class Tab3Page implements OnInit {
 
   downloadClicked(file: string, slidingItem: any) {
     slidingItem.close();
-    this.downloadService.download(file, () => this.changeDetectorRef.detectChanges());
+    this.downloadService.addToQueue(file, () => this.changeDetectorRef.detectChanges());
     this.changeDetectorRef.detectChanges();
   }
 

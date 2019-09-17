@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
+import { File } from '@ionic-native/file/ngx';
 
 @Injectable({
   providedIn: 'root'
@@ -6,11 +8,29 @@ import { Injectable } from '@angular/core';
 export class DownloadService {
   
   private downloading: string[] = [];
+  private downloadQueue: any[] = [];
+  public changed: Subject<unknown> = new Subject();
 
-  constructor() { }
+  constructor(private file: File) {
+    this.changed.subscribe(() => {
+      if (this.downloadQueue.length && this.downloading.length < 2) {
+        const queueDownload = this.downloadQueue.pop();
+        this.downloadFile(queueDownload.file, queueDownload.onFinish);
+      }
+    });
+  }
   
-  public download(file: string, onFinish?: () => void): void {
+  public addToQueue(file: string, onFinish?: () => void): void {
     if (this.isDownloading(file)) {
+      return;
+    }
+    this.downloadQueue.unshift({ file: file, onFinish: onFinish });
+    this.changed.next();
+  }
+
+  private downloadFile(file: string, onFinish: () => void) {
+    if (this.onFileSystem(file)) {
+      this.changed.next();
       return;
     }
 
@@ -21,6 +41,7 @@ export class DownloadService {
       if (onFinish) {
         onFinish();
       }
+      this.changed.next();
     }, 2000);
   }
 
