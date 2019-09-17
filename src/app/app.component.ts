@@ -13,7 +13,7 @@ import { AppService } from './app.service';
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss']
 })
-export class AppComponent implements AfterViewInit {
+export class AppComponent {
   
   constructor(
     private platform: Platform,
@@ -26,9 +26,6 @@ export class AppComponent implements AfterViewInit {
     this.initializeApp();
     this.getApiUrlChanges();
     environment.apiUrl = `http://${this.settingsService.get('serverIp')}:8080/api/File`;
-  }
-
-  ngAfterViewInit(): void {
     this.screenOrientation.lock('portrait').catch(() => this.appService.nativeWarning('ScreenOrientation.lock'));
   }
 
