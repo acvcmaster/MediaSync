@@ -57,10 +57,11 @@ export class SettingsPage implements OnDestroy {
   }
 
   accelerationToast() {
-    const message = 'Feature not implemented on API.';
+    const message = 'Will attempt to use an Nvidia GPU, if available, to offload the transcoding workload. ' +
+      'On Raspberry Pi, will try to use the broadcom omx encoder instead.';
     this.toastController.create({
       message: message,
-      duration: 2500
+      duration: 4000
     }).then((toast) => toast.present());
   }
 
