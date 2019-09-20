@@ -14,6 +14,7 @@ export class VideoComponent implements AfterViewInit, OnDestroy {
   @Input() preload: boolean = false;
   @Input() type = 'video/mp4';
   @Input() quality = 'High';
+  @Input() hardwareAcceleration = false;
   @ViewChild('videoElement', { static: false }) videoElement: ElementRef;
   
   constructor() { }
@@ -37,12 +38,14 @@ export class VideoComponent implements AfterViewInit, OnDestroy {
   getSrc() {
     if (this.file.length) {
       if (!this.transcode) {
-        return `${environment.apiUrl}/GetFile?file=${this.file}`
+        return `${environment.apiUrl}/GetFile?file=${this.file}`;
       } else {
-        if (!this.changeContainersOnly) {
-          return `${environment.apiUrl}/GetFileTranscoded?file=${this.file}&quality=${this.quality}`
+        if (!this.hardwareAcceleration) {
+          return !this.changeContainersOnly ? `${environment.apiUrl}/GetFileTranscoded?file=${this.file}&quality=${this.quality}`
+            : `${environment.apiUrl}/GetFileTranscoded?file=${this.file}&changeContainersOnly=${this.changeContainersOnly}`;
         } else {
-          return `${environment.apiUrl}/GetFileTranscoded?file=${this.file}&changeContainersOnly=${this.changeContainersOnly}`
+          return `${environment.apiUrl}/GetFileTranscoded?file=${this.file}` +
+            `&quality=${this.quality}&hardwareAcceleration=${this.hardwareAcceleration}`;
         }
       }
     }

@@ -8,14 +8,14 @@ import { Subject } from 'rxjs';
 export class SettingsService {
 
   private settings: { [id: string] : string | boolean; } = { };
-  private dataDir: string;
+  private cacheDir: string;
   private settingsDir: string;
   public settingsChanged: Subject<unknown> = new Subject();
 
   constructor(private file: File) {
-    this.dataDir = this.file.dataDirectory;
-    if (this.dataDir) {
-      this.settingsDir = `${this.dataDir}settings`; 
+    this.cacheDir = this.file.cacheDirectory;
+    if (this.cacheDir) {
+      this.settingsDir = `${this.cacheDir}settings`; 
       this.loadFromFile();
     } else {
       this.defaultValues();
@@ -23,7 +23,7 @@ export class SettingsService {
   }
 
   public loadFromFile() {
-    this.file.listDir(this.dataDir, 'settings').then((values) => {
+    this.file.listDir(this.cacheDir, 'settings').then((values) => {
       const result = values.find((value) => value.name === 'settings') !== undefined;
       if (result) {
         this.getObject(); // file already exists
@@ -59,7 +59,7 @@ export class SettingsService {
     if (setting !== undefined && setting !== null) {
       this.settings[key] = value;
       this.settingsChanged.next();
-      if (this.dataDir) {
+      if (this.cacheDir) {
         this.save();
       }
     }
@@ -67,10 +67,10 @@ export class SettingsService {
 
   public save(): boolean {
     let result: boolean = false;
-    this.file.checkDir(this.dataDir, 'settings').then(_ => {
+    this.file.checkDir(this.cacheDir, 'settings').then(_ => {
       this.file.writeFile(this.settingsDir, 'settings', this.getText(), { replace: true }).then(_ => result = true);
     }).catch(_ => {
-      this.file.createDir(this.dataDir, 'settings', false).then(_ => {
+      this.file.createDir(this.cacheDir, 'settings', false).then(_ => {
         this.file.writeFile(this.settingsDir, 'settings', this.getText(), { replace: true }).then(_ => result = true);
       });
     });
