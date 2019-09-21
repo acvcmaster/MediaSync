@@ -18,7 +18,8 @@
         </ion-thumbnail>
         <ion-label class="tab">
           {{ file.name | noExtension | trim }}</ion-label>
-        <ion-icon name="checkmark-circle" *ngIf="!file.downloading() && file.downloaded()"></ion-icon>
+        <ion-icon name="checkmark-circle" *ngIf="!file.downloading() && file.downloaded() && !file.hasError()"></ion-icon>
+        <ion-icon name="close-circle" *ngIf="file.hasError()"></ion-icon>
         <ion-spinner name="crescent" *ngIf="file.downloading()"></ion-spinner>
       </ion-item>
       <ion-item-options side="end">
