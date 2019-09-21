@@ -32,16 +32,16 @@
       <ion-toggle checked="{{ settingsService.get('hardwareAcceleration') }}" #accelerationToggle (ionChange)="onAccelerationChange()"></ion-toggle>
       <ion-icon slot="end" color="medium" name="alert" (click)="accelerationToast()"></ion-icon>
     </ion-item>
-    <ion-item>
-      <ion-icon slot="start" color="medium" name="laptop"></ion-icon>
-      <ion-label>Server address :</ion-label>
-      <ion-input #serverIpInput value="{{ settingsService.get('serverIp') }}" placeholder="Server IP" (ionInput)="onServerIpChange()"></ion-input>
-    </ion-item>
     <ion-item  disabled="{{ !transcodingToggle.checked }}">
         <ion-icon slot="start" color="medium" name="cube"></ion-icon>
         <ion-label>Change containers only</ion-label>
         <ion-toggle checked="{{ settingsService.get('changeContainersOnly') }}" #containerToggle (ionChange)="onContainerChange()"></ion-toggle>
         <ion-icon slot="end" color="medium" name="alert" (click)="containerToast()"></ion-icon>
-      </ion-item>
+    </ion-item>
+    <ion-item>
+      <ion-icon slot="start" color="medium" name="laptop"></ion-icon>
+      <ion-label>Server address :</ion-label>
+      <ion-input #serverIpInput value="{{ settingsService.get('serverIp') }}" placeholder="Server IP" (ionInput)="onServerIpChange()"></ion-input>
+    </ion-item>
   </ion-list>
 </ion-content>
