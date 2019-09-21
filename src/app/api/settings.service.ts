@@ -41,7 +41,7 @@ export class SettingsService {
 
   private defaultValues() {
     this.settings['transcode'] = false;
-    this.settings['quality'] = 'Medium';
+    this.settings['quality'] = 'High';
     this.settings['serverIp'] = 'localhost';
     this.settings['hardwareAcceleration'] = false;
     this.settings['changeContainersOnly'] = false;
