@@ -30,7 +30,8 @@ export class Tab3Page implements OnInit {
         return {
           name: name,
           downloading: () => this.downloadService.isDownloading(name),
-          downloaded: () => this.downloadService.isDownloaded(name)
+          downloaded: () => this.downloadService.isDownloaded(name),
+          hasError: () => this.downloadService.hasError(name)
         }
       });
       this.fileListFiltered = this.fileList;
@@ -47,12 +48,14 @@ export class Tab3Page implements OnInit {
         return {
           name: name,
           downloading: () => this.downloadService.isDownloading(name),
-          downloaded: () => this.downloadService.isDownloaded(name)
+          downloaded: () => this.downloadService.isDownloaded(name),
+          hasError: () => this.downloadService.hasError(name)
         }
       });
       const filterEvent = event;
       filterEvent.target.value = this.searchBar.value;
       this.onFilter(filterEvent);
+      this.downloadService.probeFileSystem();
       event.target.complete();
     });
   }

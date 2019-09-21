@@ -10,6 +10,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { File } from '@ionic-native/file/ngx';
+import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 
 @NgModule({
@@ -21,7 +22,9 @@ import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
     SplashScreen,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     File,
-    ScreenOrientation
+    ScreenOrientation,
+    FileTransfer,
+    FileTransferObject
   ],
   bootstrap: [AppComponent]
 })

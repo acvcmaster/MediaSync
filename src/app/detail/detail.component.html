@@ -26,14 +26,15 @@
       </ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <p>Size : {{ details.length | inMB }}</p>
-      <p>Extension :
+      <p><b>Size:</b> {{ details.length | inMB }}</p>
+      <p><b>Extension: </b>
         <ion-badge color="{{ colorFromExtension(details.extension) }}" (click)="badgeToast(details.extension)" style="vertical-align: top">
           {{ details.extension | noDot }}</ion-badge>
       </p>
-      <p>Creation time : {{ details.creationTime | formatDate }}</p>
-      <p>Last acess time : {{ details.lastAccessTime | formatDate }}</p>
-      <p>Last write time : {{ details.lastWriteTime | formatDate }}</p>
+      <p><b>Creation time:</b> {{ details.creationTime | formatDate }}</p>
+      <p><b>Last acess time:</b> {{ details.lastAccessTime | formatDate }}</p>
+      <p><b>Last write time:</b> {{ details.lastWriteTime | formatDate }}</p>
+      <p *ngIf="localPath"><b>Local path:</b> {{ localPath }}</p>
     </ion-card-content>
   </ion-card>
   <ion-card>

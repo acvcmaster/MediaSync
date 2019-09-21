@@ -17,6 +17,7 @@ export class DetailComponent implements OnInit {
   public details: any;
   public metadata: string[];
   public environment: any;
+  public localPath: string;
   @ViewChild('transcoding', { static: false }) transcoding: IonCheckbox;
 
   constructor(
@@ -38,6 +39,7 @@ export class DetailComponent implements OnInit {
     };
     this.apiService.getDetails(name).subscribe((value) => this.details = value);
     this.apiService.getMetadata(name).subscribe((value) => this.metadata = value);
+    this.downloadService.getLocalPath(name).then((path) => this.localPath = path);
   }
 
   downloadClicked() {
