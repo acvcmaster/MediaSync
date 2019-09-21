@@ -12,6 +12,7 @@ import { catchError } from 'rxjs/operators';
 export class DownloadService {
 
   private downloading: string[] = [];
+  private fileSystemMock: string[] = [];
   private downloadQueue: any[] = [];
   public changed: Subject<unknown> = new Subject();
   private storagePath: string;
@@ -28,6 +29,8 @@ export class DownloadService {
     this.storagePath = this.file.externalRootDirectory;
     this.downloadsFolder = `${this.storagePath}Download/`;
     this.mediaFolder = `${this.downloadsFolder}Media/`;
+
+    this.probeFileSystem();
   }
 
   public addToQueue(file: string, onFinish?: () => void): void {
@@ -46,7 +49,6 @@ export class DownloadService {
 
     this.downloading.push(file);
     const downloadSubscription = this.getFile(file).subscribe((result) => {
-      this.removeDownload(file);
       this.storagePath ? this.downloadFileAndroid(result, file, onFinish, downloadSubscription)
         : this.downloadFileMocked(result, file, onFinish, downloadSubscription);
     });
@@ -58,6 +60,8 @@ export class DownloadService {
         if (onFinish) {
           onFinish();
         }
+        this.fileSystemMock.push(file);
+        this.removeDownload(file);
         this.changed.next();
         downloadSubscription.unsubscribe();
       }, (error) => {
@@ -67,7 +71,7 @@ export class DownloadService {
     }
   }
 
-  checkDirectoriesAndSave(file: string, result: Blob, callback: () => void, onFail: (error: any) => void) {    
+  checkDirectoriesAndSave(file: string, result: Blob, callback: () => void, onFail: (error: any) => void) {
     this.file.checkDir(this.downloadsFolder, 'Media').then(_ => {
       this.file.writeFile(this.mediaFolder, file, result, { replace: true }).then(() => callback()).catch((error) => onFail(error));
     }).catch(_ => {
@@ -84,6 +88,7 @@ export class DownloadService {
     if (onFinish) {
       onFinish();
     }
+    this.removeDownload(file);
     this.changed.next();
     downloadSubscription.unsubscribe();
   }
@@ -96,6 +101,16 @@ export class DownloadService {
   }
 
   removeFile(file: string, onFinish: () => void) {
+    if (this.storagePath) {
+      this.file.removeFile(this.mediaFolder, file).then(() => {
+        this.removeFileMock(file, onFinish);
+      });
+    } else {
+      this.removeFileMock(file, onFinish);
+    }
+  }
+
+  removeFileMock(file: string, onFinish: () => void) {
     const fileIndex: number = this.fileSystemMock.findIndex((elem) => elem === file);
     if (fileIndex != -1) {
       this.fileSystemMock.splice(fileIndex, 1);
@@ -103,7 +118,15 @@ export class DownloadService {
     onFinish();
   }
 
-  private fileSystemMock: string[] = [];
+  probeFileSystem() {
+    if (this.storagePath) {
+      this.file.listDir(this.downloadsFolder, 'Media').then((entries) => {
+        this.fileSystemMock = entries.map((entry) => entry.name);
+        this.changed.next();
+      });
+    }
+  }
+
   private onFileSystem(file: string): boolean {
     return this.fileSystemMock.findIndex((elem) => elem === file) !== -1;
   }
