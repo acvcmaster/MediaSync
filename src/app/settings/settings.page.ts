@@ -17,7 +17,10 @@ export class SettingsPage implements OnDestroy {
   @ViewChild('containerToggle', { static: false }) containerToggle: IonToggle;
   private subscriptions: Subscription[] = [];
 
-  constructor(public settingsService: SettingsService, private toastController: ToastController, private changeDetectorRef: ChangeDetectorRef) {
+  constructor(
+    public settingsService: SettingsService,
+    private toastController: ToastController,
+    private changeDetectorRef: ChangeDetectorRef) {
     this.subscriptions.push(this.settingsService.settingsChanged.subscribe(() => this.changeDetectorRef.detectChanges()));
   }
 
@@ -51,7 +54,7 @@ export class SettingsPage implements OnDestroy {
       'number of concurrent transcoded streams that are possible. Enable ' +
       'this only if you\'re having playback issues, or if playback is not possible.';
     this.toastController.create({
-      message: message,
+      message,
       duration: 8000
     }).then((toast) => toast.present());
   }
@@ -60,7 +63,7 @@ export class SettingsPage implements OnDestroy {
     const message = 'Will attempt to use an Nvidia GPU, if available, to offload the transcoding workload. ' +
       'On Raspberry Pi, will try to use the broadcom omx encoder instead.';
     this.toastController.create({
-      message: message,
+      message,
       duration: 4000
     }).then((toast) => toast.present());
   }
@@ -70,7 +73,7 @@ export class SettingsPage implements OnDestroy {
       'codec conversion whatsoever. This option reduces the CPU usage in the server ' +
       'to basically zero, but playback might stop working. In that case, disable this option.';
     this.toastController.create({
-      message: message,
+      message,
       duration: 8000
     }).then((toast) => toast.present());
   }

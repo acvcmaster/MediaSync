@@ -1,7 +1,7 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component } from '@angular/core';
 import { DownloadService } from '../api/download.service';
 import { ApiService } from '../api/api.service';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-tab1',

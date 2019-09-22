@@ -28,11 +28,11 @@ export class Tab3Page implements OnInit {
     this.apiService.getFileNames().subscribe((values) => {
       this.fileList = values.map((name) => {
         return {
-          name: name,
+          name,
           downloading: () => this.downloadService.isDownloading(name),
           downloaded: () => this.downloadService.isDownloaded(name),
           hasError: () => this.downloadService.hasError(name)
-        }
+        };
       });
       this.fileListFiltered = this.fileList;
     });
@@ -40,17 +40,17 @@ export class Tab3Page implements OnInit {
   }
 
   onRefresh(event: any) {
-    this.apiService.getFileNames().pipe(catchError(_ => { // On error
+    this.apiService.getFileNames().pipe(catchError(() => { // On error
       event.target.complete(); // stop refresher
       return of([] as string[]); // fallback value
     })).subscribe((values) => {
       this.fileList = values.map((name) => { // On success
         return {
-          name: name,
+          name,
           downloading: () => this.downloadService.isDownloading(name),
           downloaded: () => this.downloadService.isDownloaded(name),
           hasError: () => this.downloadService.hasError(name)
-        }
+        };
       });
       const filterEvent = event;
       filterEvent.target.value = this.searchBar.value;
