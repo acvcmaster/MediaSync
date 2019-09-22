@@ -23,6 +23,7 @@ import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     File,
     ScreenOrientation,
+    // tslint:disable:deprecation
     FileTransfer,
     FileTransferObject
   ],

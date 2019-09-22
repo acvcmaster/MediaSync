@@ -1,8 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, SecurityContext } from '@angular/core';
 import { Subject } from 'rxjs';
 import { File } from '@ionic-native/file/ngx';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { environment } from 'src/environments/environment';
+import { HttpClient } from '@angular/common/http';
+import { map } from 'rxjs/operators';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Injectable({
   providedIn: 'root'
@@ -18,8 +21,10 @@ export class DownloadService {
   private downloadsFolder: string;
   private mediaFolder: string;
   private downloader: FileTransferObject;
+  public blobStorage: { [id: string]: string; } = { };
 
-  constructor(private file: File, private fileTransfer: FileTransfer) {
+  // tslint:disable:deprecation
+  constructor(private file: File, private fileTransfer: FileTransfer, private httpClient: HttpClient, private sanitizer: DomSanitizer) {
     this.changed.subscribe(() => {
       if (this.downloadQueue.length && this.downloading.length < 2) {
         const queueDownload = this.downloadQueue.pop();
@@ -51,7 +56,7 @@ export class DownloadService {
     this.removeError(file);
 
     this.storagePath ? this.downloadFileAndroid(file, onFinish)
-      : this.downloadFileMocked(file, onFinish);
+      : this.downloadFileBrowser(file, onFinish);
   }
 
   private downloadFileAndroid(file: string, onFinish: () => void) {
@@ -79,14 +84,22 @@ export class DownloadService {
     });
   }
 
-  private downloadFileMocked(file: string, onFinish: () => void) {
-    this.fileSystem.push(file);
+  private downloadFileBrowser(file: string, onFinish: () => void) {
+    const subscription = this.httpClient.get<Blob>(this.getFileUrl(file), { responseType: 'blob' as 'json' })
+      .pipe(map((result => {
+        if (result) {
+          this.fileSystem.push(file);
+          this.addToBlobStorage(file, result);
 
-    if (onFinish) {
-      onFinish();
-    }
-    this.removeDownload(file);
-    this.changed.next();
+          if (onFinish) {
+            onFinish();
+          }
+          this.removeDownload(file);
+          this.changed.next(file);
+        }
+        subscription.unsubscribe();
+        return result;
+      }))).subscribe();
   }
 
   getFileUrl(file: string): string {
@@ -96,18 +109,19 @@ export class DownloadService {
   removeFile(file: string, onFinish: () => void) {
     if (this.storagePath) {
       this.file.removeFile(this.mediaFolder, file).then(() => {
-        this.removeFileMock(file, onFinish);
+        this.removeFromFileSystem(file, onFinish);
       });
     } else {
-      this.removeFileMock(file, onFinish);
+      this.removeFromFileSystem(file, onFinish);
     }
   }
 
-  removeFileMock(file: string, onFinish: () => void) {
+  removeFromFileSystem(file: string, onFinish: () => void) {
     const fileIndex: number = this.fileSystem.findIndex((elem) => elem === file);
     if (fileIndex !== -1) {
       this.fileSystem.splice(fileIndex, 1);
     }
+    this.removeFromBlobStorage(file);
     onFinish();
   }
 
@@ -157,5 +171,14 @@ export class DownloadService {
       return promise.then((exists) => exists ? `${this.mediaFolder}${file}` : null).catch(() => null);
     }
     return Promise.resolve(null);
+  }
+
+  public addToBlobStorage(file: string, blob: Blob) {
+    this.blobStorage[file] = this.sanitizer.sanitize(SecurityContext.RESOURCE_URL,
+      this.sanitizer.bypassSecurityTrustResourceUrl(window.URL.createObjectURL(blob)));
+  }
+
+  public removeFromBlobStorage(file: string) {
+    this.blobStorage[file] = null;
   }
 }
