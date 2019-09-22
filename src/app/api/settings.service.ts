@@ -7,7 +7,7 @@ import { Subject } from 'rxjs';
 })
 export class SettingsService {
 
-  private settings: { [id: string] : string | boolean; } = { };
+  private settings: { [id: string]: string | boolean; } = { };
   private cacheDir: string;
   private settingsDir: string;
   public settingsChanged: Subject<unknown> = new Subject();
@@ -15,7 +15,7 @@ export class SettingsService {
   constructor(private file: File) {
     this.cacheDir = this.file.cacheDirectory;
     if (this.cacheDir) {
-      this.settingsDir = `${this.cacheDir}settings`; 
+      this.settingsDir = `${this.cacheDir}settings`;
       this.loadFromFile();
     } else {
       this.defaultValues();
@@ -30,7 +30,7 @@ export class SettingsService {
       } else {
         this.initializeSettings(); // initialize file with default values
       }
-    }).catch(_ => this.initializeSettings());
+    }).catch(() => this.initializeSettings());
   }
 
   private initializeSettings() {
@@ -40,6 +40,7 @@ export class SettingsService {
   }
 
   private defaultValues() {
+    // tslint:disable:no-string-literal
     this.settings['transcode'] = false;
     this.settings['quality'] = 'High';
     this.settings['serverIp'] = 'localhost';
@@ -66,12 +67,12 @@ export class SettingsService {
   }
 
   public save(): boolean {
-    let result: boolean = false;
-    this.file.checkDir(this.cacheDir, 'settings').then(_ => {
-      this.file.writeFile(this.settingsDir, 'settings', this.getText(), { replace: true }).then(_ => result = true);
-    }).catch(_ => {
-      this.file.createDir(this.cacheDir, 'settings', false).then(_ => {
-        this.file.writeFile(this.settingsDir, 'settings', this.getText(), { replace: true }).then(_ => result = true);
+    let result = false;
+    this.file.checkDir(this.cacheDir, 'settings').then(() => {
+      this.file.writeFile(this.settingsDir, 'settings', this.getText(), { replace: true }).then(() => result = true);
+    }).catch(() => {
+      this.file.createDir(this.cacheDir, 'settings', false).then(() => {
+        this.file.writeFile(this.settingsDir, 'settings', this.getText(), { replace: true }).then(() => result = true);
       });
     });
     return result;

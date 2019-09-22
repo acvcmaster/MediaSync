@@ -1,4 +1,4 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
@@ -14,7 +14,7 @@ import { AppService } from './app.service';
   styleUrls: ['app.component.scss']
 })
 export class AppComponent {
-  
+
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
@@ -37,7 +37,7 @@ export class AppComponent {
   }
 
   private getApiUrlChanges() {
-    this.settingsService.settingsChanged.subscribe(_ => {
+    this.settingsService.settingsChanged.subscribe(() => {
       environment.apiUrl = `http://${this.settingsService.get('serverIp')}:8080/api/File`;
     });
   }

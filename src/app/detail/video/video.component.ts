@@ -9,14 +9,14 @@ import { environment } from 'src/environments/environment';
 export class VideoComponent implements AfterViewInit, OnDestroy {
 
   @Input() file: string;
-  @Input() transcode: boolean = false;
-  @Input() changeContainersOnly: boolean = false;
-  @Input() preload: boolean = false;
+  @Input() transcode = false;
+  @Input() changeContainersOnly = false;
+  @Input() preload = false;
   @Input() type = 'video/mp4';
   @Input() quality = 'High';
   @Input() hardwareAcceleration = false;
   @ViewChild('videoElement', { static: false }) videoElement: ElementRef;
-  
+
   constructor() { }
 
   ngAfterViewInit() {

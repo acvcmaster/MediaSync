@@ -26,14 +26,15 @@ export class DetailComponent implements OnInit {
     private downloadService: DownloadService,
     private changeDetectorRef: ChangeDetectorRef,
     private toastController: ToastController,
-    private settingsService:  SettingsService) {
+    private settingsService: SettingsService) {
     this.environment = environment;
   }
 
   ngOnInit() {
+    // tslint:disable:no-string-literal
     const name: string = this.route.snapshot.params['name'];
     this.file = {
-      name: name,
+      name,
       downloading: () => this.downloadService.isDownloading(name),
       downloaded: () => this.downloadService.isDownloaded(name)
     };
@@ -62,10 +63,11 @@ export class DetailComponent implements OnInit {
   badgeToast(extension: string) {
     let duration = 2000;
     if (extension) {
-      let message: string = '';
+      let message = '';
       if (this.transcodingChecked()) {
         message = this.supportedExtension(extension) ?
-          'This extension supports previewing on the app.' : 'Unsupported extension. The server will transcode this file into a playable format.';
+          'This extension supports previewing on the app.'
+            : 'Unsupported extension. The server will transcode this file into a playable format.';
       } else {
         if (this.supportedExtension(extension)) {
           message = 'This extension supports previewing on the app.';
@@ -75,8 +77,8 @@ export class DetailComponent implements OnInit {
         }
       }
       this.toastController.create({
-        message: message,
-        duration: duration
+        message,
+        duration
       }).then((toast) => toast.present());
     }
   }

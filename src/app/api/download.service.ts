@@ -37,7 +37,7 @@ export class DownloadService {
     if (this.isDownloading(file)) {
       return;
     }
-    this.downloadQueue.unshift({ file: file, onFinish: onFinish });
+    this.downloadQueue.unshift({ file, onFinish });
     this.changed.next();
   }
 
@@ -70,10 +70,10 @@ export class DownloadService {
   }
 
   checkDirectoriesAndSave(file: string, callback: () => void, onFail: () => void) {
-    this.file.checkDir(this.downloadsFolder, 'Media').then(_ => {
+    this.file.checkDir(this.downloadsFolder, 'Media').then(() => {
       this.downloader.download(this.getFileUrl(file), `${this.mediaFolder}${file}`).then(() => callback()).catch(() => onFail());
-    }).catch(_ => {
-      this.file.createDir(this.downloadsFolder, 'Media', true).then(_ => {
+    }).catch(() => {
+      this.file.createDir(this.downloadsFolder, 'Media', true).then(() => {
       this.downloader.download(this.getFileUrl(file), `${this.mediaFolder}${file}`).then(() => callback()).catch(() => onFail());
       }).catch(() => onFail());
     });
@@ -105,7 +105,7 @@ export class DownloadService {
 
   removeFileMock(file: string, onFinish: () => void) {
     const fileIndex: number = this.fileSystem.findIndex((elem) => elem === file);
-    if (fileIndex != -1) {
+    if (fileIndex !== -1) {
       this.fileSystem.splice(fileIndex, 1);
     }
     onFinish();
@@ -139,19 +139,23 @@ export class DownloadService {
 
   private removeDownload(file: string) {
     const downloadIndex: number = this.downloading.findIndex((elem) => elem === file);
-    if (downloadIndex != -1) {
+    if (downloadIndex !== -1) {
       this.downloading.splice(downloadIndex, 1);
     }
   }
 
   private removeError(file: string) {
     const errorIndex: number = this.fileSystemError.findIndex((elem) => elem === file);
-    if (errorIndex != -1) {
+    if (errorIndex !== -1) {
       this.fileSystemError.splice(errorIndex, 1);
     }
   }
 
   public getLocalPath(file: string): Promise<string> {
-    return this.file.checkFile(this.mediaFolder, file).then((exists) => exists ? `${this.mediaFolder}${file}` : null).catch(() => null);
+    const promise = this.file.checkFile(this.mediaFolder, file);
+    if (promise) {
+      return promise.then((exists) => exists ? `${this.mediaFolder}${file}` : null).catch(() => null);
+    }
+    return Promise.resolve(null);
   }
 }
