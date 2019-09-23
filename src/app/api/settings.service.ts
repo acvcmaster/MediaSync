@@ -18,7 +18,7 @@ export class SettingsService {
       this.settingsDir = `${this.cacheDir}settings`;
       this.loadFromFile();
     } else {
-      this.defaultValues();
+      this.getObject();
     }
   }
 
@@ -58,24 +58,38 @@ export class SettingsService {
   public change(key: string, value: string | boolean) {
     const setting = this.settings[key];
     if (setting !== undefined && setting !== null) {
+      const previous = this.settings[key];
       this.settings[key] = value;
       this.settingsChanged.next();
-      if (this.cacheDir) {
-        this.save();
-      }
+      this.save().then((completed) => {
+        if (!completed) {
+          this.settings[key] = previous;
+          this.settingsChanged.next();
+        }
+      }).catch(() => {
+        this.settingsChanged[key] = previous;
+        this.settingsChanged.next();
+      });
     }
   }
 
-  public save(): boolean {
-    let result = false;
-    this.file.checkDir(this.cacheDir, 'settings').then(() => {
-      this.file.writeFile(this.settingsDir, 'settings', this.getText(), { replace: true }).then(() => result = true);
-    }).catch(() => {
-      this.file.createDir(this.cacheDir, 'settings', false).then(() => {
-        this.file.writeFile(this.settingsDir, 'settings', this.getText(), { replace: true }).then(() => result = true);
+  public save(): Promise<boolean> {
+    if (this.cacheDir) {
+      this.file.checkDir(this.cacheDir, 'settings').then(() => {
+        return this.file.writeFile(this.settingsDir, 'settings', this.getText(), { replace: true });
+      }).catch(() => {
+        this.file.createDir(this.cacheDir, 'settings', false).then(() => {
+          return this.file.writeFile(this.settingsDir, 'settings', this.getText(), { replace: true });
+        });
       });
-    });
-    return result;
+    } else {
+      try {
+        localStorage.setItem('mediaSync-Settings', this.getText());
+      } catch {
+        return Promise.resolve(false);
+      }
+      return Promise.resolve(true);
+    }
   }
 
   private getText(): string {
@@ -83,10 +97,19 @@ export class SettingsService {
   }
 
   private getObject() {
-    this.file.readAsText(this.settingsDir, 'settings').then((contents) => {
-      this.settings = JSON.parse(contents);
-      this.settingsChanged.next();
-    });
+    if (this.cacheDir) {
+      this.file.readAsText(this.settingsDir, 'settings').then((contents) => {
+        this.settings = JSON.parse(contents);
+        this.settingsChanged.next();
+      });
+    } else {
+      const settings = localStorage.getItem('mediaSync-Settings');
+      if (settings) {
+        this.settings = JSON.parse(settings);
+      } else {
+        this.initializeSettings();
+      }
+    }
   }
 
   public get(key: string) {
