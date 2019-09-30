@@ -5,6 +5,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { SharedModule } from '../shared/shared.module';
 import { VideoComponent } from './video/video.component';
+import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 
 
 const routes: Routes = [
@@ -20,6 +21,9 @@ const routes: Routes = [
     IonicModule,
     SharedModule,
     RouterModule.forChild(routes)
+  ],
+  providers: [
+    ScreenOrientation
   ],
   exports: [DetailComponent]
 })

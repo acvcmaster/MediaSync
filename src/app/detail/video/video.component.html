@@ -1,4 +1,4 @@
 <video #videoElement controls playsinline webkit-playsinline
-style="object-fit: contain" width="100%" poster="{{ getPoster() }}">
+style="object-fit: contain" width="100%" poster="{{ getPoster() }}" (webkitfullscreenchange)="toggleFullscreen()">
 <source src="{{ getSrc() }}" type="{{ type }}" />
 </video>

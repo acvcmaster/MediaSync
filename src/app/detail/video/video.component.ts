@@ -1,5 +1,7 @@
 import { Component, Input, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { environment } from 'src/environments/environment';
+import { AppService } from 'src/app/app.service';
+import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 
 @Component({
   selector: 'app-video',
@@ -16,13 +18,25 @@ export class VideoComponent implements AfterViewInit, OnDestroy {
   @Input() quality = 'High';
   @Input() hardwareAcceleration = false;
   @ViewChild('videoElement', { static: false }) videoElement: ElementRef;
+  fullscreen: boolean;
 
-  constructor() { }
+  constructor(private screenOrientation: ScreenOrientation, private appService: AppService) {
+    this.fullscreen = false;
+  }
 
   ngAfterViewInit() {
     if (this.preload) {
       this.videoElement.nativeElement.preload = 'metadata';
     }
+  }
+
+  toggleFullscreen() {
+    if (this.fullscreen) {
+      this.screenOrientation.lock('portrait').catch(() => this.appService.nativeWarning('ScreenOrientation.lock'));
+    } else {
+      this.screenOrientation.lock('landscape').catch(() => this.appService.nativeWarning('ScreenOrientation.lock'));
+    }
+    this.fullscreen = !this.fullscreen;
   }
 
   ngOnDestroy() {
