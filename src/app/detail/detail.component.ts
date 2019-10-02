@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { ApiService } from '../api/api.service';
 import { DownloadService } from '../api/download.service';
@@ -22,6 +22,7 @@ export class DetailComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private apiService: ApiService,
     private downloadService: DownloadService,
     private changeDetectorRef: ChangeDetectorRef,
@@ -104,5 +105,9 @@ export class DetailComponent implements OnInit {
 
   hardwareAcceleration(): boolean {
     return this.settingsService.get('hardwareAcceleration') as boolean;
+  }
+
+  onBack() {
+    this.router.navigate(['/tabs/tab3']);
   }
 }
